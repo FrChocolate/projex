@@ -1,0 +1,17 @@
+LICENSE
+README.md
+pyproject.toml
+projex/main.py
+projex/actions/__init__.py
+projex/actions/env.py
+projex/actions/new.py
+projex/actions/run.py
+projex/utils/__init__.py
+projex/utils/config.py
+projex/utils/cutie.py
+projex/utils/parser.py
+pyprojex.egg-info/PKG-INFO
+pyprojex.egg-info/SOURCES.txt
+pyprojex.egg-info/dependency_links.txt
+pyprojex.egg-info/entry_points.txt
+pyprojex.egg-info/top_level.txt
