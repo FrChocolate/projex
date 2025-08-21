@@ -1,4 +1,6 @@
 import json
+import subprocess
+
 from ..utils import p, line, parse
 import os
 import json
@@ -6,11 +8,10 @@ import json
 BASIC = {
     "projex": "1.0.1",
     "dependencies": [],
-    "mainFile": "main.py",
     "env":{},
-    "ssh": None,
-    "venv": ".venv",
+    "ssh": [],
     "runners": {},
+    "variables": {}
 }
 
 
@@ -40,8 +41,15 @@ def main():
                 )
 
     p("Creating new projex...")
-    BASIC["venv"] = venv
-    BASIC["mainFile"] = main_file
+    BASIC['variables']["venv"] = venv
+    BASIC["variables"]["mainFile"] = main_file
+    BASIC['runners']['base'] = dict(
+            cmd='{venv}/bin/python {mainFile}',
+            env="g",
+            linked="m",
+            sandbox=False
+    )
+    subprocess.run(['python', '-m', 'venv', '.venv'])
     try:
         with open(filename, "+w", encoding="utf-8") as fp:
             json.dump(BASIC, fp, indent=2)

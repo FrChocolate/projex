@@ -1,5 +1,9 @@
+import os
+import subprocess
+import shlex
 from ..utils import p, line, parse, load, save
 
+DT_PROCESS =  0x00000008
 
 HELP = '''
 -> Welcome to run section, here you add runners and manage them
@@ -33,7 +37,7 @@ def main():
                 "fatal"
             )
         cmd = input(
-            f"- Please enter the bash command you want to {data.raw[2]} contain: "
+            f"- Please enter the bash command you want to {data.raw[2]} contain [You can use variables in curly braces]: "
         )
         env = input(
             "- In this case do you want this command run in global environment or minimal [g/m]"
@@ -77,6 +81,29 @@ def main():
             p(f"{j} ({i['env']}, {i['linked']}) - {i['cmd']}")
 
     elif action == 'start':
-        pass
+        name = data.raw[2]
+        loaded = config['runners'][name]
+        variables = config['variables']
+        cmd = loaded['cmd'].format(**variables)
+        if loaded['env'] == 'g':
+           env = os.environ
+        elif loaded['env'] == 'm' and loaded['linked'] in config['env']:
+            env = config['env'][loaded['linked']]
+            if "__global__" in env and env['__global__'] == True:
+                p("Merging global variables with custom group, __global__ detected.")
+                env.update(os.environ)
+        else:
+            p("No environment variable group is available for this run. Running with empty environment variables", "warning")
+            env = dict()
+        p(str(shlex.split(cmd)))
+        if data.disown or data.bg:
+            if os.name == 'nt': # Windows
+                proc = subprocess.run(shlex.split(cmd),  creationflags=DT_PROCESS, close_fds=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
+            else: # Unix
+                proc = subprocess.Popen(shlex.split(cmd), start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, stdin=subprocess.DEVNULL)
+            p(f"Process ID: {proc.pid}")
+        else:
+            subprocess.run(shlex.split(cmd), env=env)
+
 
     

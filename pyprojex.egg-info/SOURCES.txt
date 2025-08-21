@@ -1,11 +1,14 @@
 LICENSE
 README.md
 pyproject.toml
+projex/__init__.py
 projex/main.py
 projex/actions/__init__.py
 projex/actions/env.py
+projex/actions/helper.py
 projex/actions/new.py
 projex/actions/run.py
+projex/actions/variables.py
 projex/utils/__init__.py
 projex/utils/config.py
 projex/utils/cutie.py
